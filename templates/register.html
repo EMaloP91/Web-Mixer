@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<li class="nav-item">
+    <a href="/login" class="nav-link active" aria-current="page" style="color: aliceblue;">Log In</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/" style="color: aliceblue;">Home</a>
+</li>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <form action="/register" method="POST">
+        <div class="mb-3">
+            <label for="InputEmail" class="form-label">Email Address</label>
+            <input autocomplete="off" autofocus type="email" class="form-control" name="email" placeholder="Email" id="InputEmail" aria-placeholder="Email">
+        </div>
+        <div class="mb-3">
+            <label for="InputPassword" class="form-label">Password</label>
+            <input autocomplete="off" type="password" class="form-control" name="password1" placeholder="Password" id="InputPassword" aria-placeholder="Password">
+        </div>
+        <div class="mb-3">
+            <label for="InputPasswordagain" class="form-label">Repeat Password</label>
+            <input autocomplete="off" type="password" class="form-control" name="password2" placeholder="Password" id="InputPasswordagain" aria-placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+
+{% endblock %}

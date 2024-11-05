@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/" style="color: aliceblue;">Home</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/register.html" style="color: aliceblue;">Register</a>
+</li>
+{% endblock %}
+
+{% block main %}
+<div class="container centered">
+    <h1 class="apology">
+        {{ code }}
+    </h1>
+    
+    <h2 class="apology">
+        Apologies, something went wrong
+    </h2>
+    
+    <h2 class="apology">
+        {{ message }}
+    </h2>
+</div>
+{% endblock %}

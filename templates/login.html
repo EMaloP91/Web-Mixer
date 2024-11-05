@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<li class="nav-item">
+    <a href="/register" class="nav-link active" aria-current="page" style="color: aliceblue;">Register</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/" style="color: aliceblue;">Home</a>
+</li>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <label for="InputEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control" name="email" id="InputEmail" aria-placeholder="Email">
+        </div>
+        <div class="mb-3">
+            <label for="InputPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" id="InputPassword" aria-placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+{% endblock %}
