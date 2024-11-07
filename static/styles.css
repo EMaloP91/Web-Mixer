@@ -29,13 +29,43 @@ h1 {
     min-height: 85vh;
 }
 
-.fader, .pan, .track-name {
+/*.fader, .pan, .track-name {
     background-color: #8f8c8c;
     margin-top: 20px;
-}
+}*/
 
 .pan {
     height: 15vh;
+}
+
+.pan input[type="range"] {
+    appearance: none;
+    position: relative;
+    top: 65%;
+    height: 7px;
+    max-width: 75%;
+    left: 12%;
+    background-color: black;
+    border-radius: 5px;
+}
+
+.pan input[type="range"]::-webkit-slider-thumb {
+    box-shadow: 1px 1px 1px #000000;
+    border: 1px solid black;
+    height: 30px;
+    width: 15px;
+    border-radius: 5px;
+    background: #e72b2b;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+.pan input[type="range"]::after {
+    content: attr(value);
+    position: absolute;
+    top: 15px;
+    /*margin-top: 2px;*/
+    left: 45%;
 }
 
 .fader {
@@ -49,15 +79,29 @@ h1 {
     transform: rotate(270deg) /*translate(-50%, -50%)*/;
     margin-top: 25%;
     width: 350%;
+    height: 7px;
     top: 43%;
     right: 125%;
-
+    background-color: black;
+    border-radius: 5px;
 }
+
+.fader input[type="range"]::-webkit-slider-thumb {
+    box-shadow: 0px 1px 1px 1px #000000;
+    border: 1px solid rgb(54, 53, 53);
+    border-radius: 3px;
+    height: 30px;
+    width: 15px;
+    background: #e8ecbd;
+    cursor: pointer;
+    appearance: none;
+}
+
 .fader input[type="range"]::after {
     content: attr(value);
     position: absolute;
     top: 12px;
-    margin-top: 2px;
-    left: 50%;
+    margin-top: 6px;
+    left: 75%;
     transform: rotate(90deg);
 }
