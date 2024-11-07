@@ -19,6 +19,6 @@ faders.forEach(fader => {
     //add an event listener for when the range is moved
     fader.addEventListener('input', function() {
         //change the attribute value accordingly
-        fader.setAttribute('value', fader.value);
+        fader.setAttribute('value', (2 * Math.log10(fader.value)).toFixed(2).toString());
     });
 });
