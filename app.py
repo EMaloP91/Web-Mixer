@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -121,3 +121,13 @@ def logout():
 @app.route('/apology/<int:code>/<message>')
 def apology(code=404, message="An Error Ocurred"):
     return render_template("apology.html", code=code, message=message)
+
+# define a route for fetching audiofiles from server
+@app.route('/audiofiles')
+def get_audio_files():
+    folder = 'static'
+    audio_files = [f for f in os.listdir(folder) if f.endswith('.mp3')]
+    return jsonify(audio_files)
+
+if __name__ == '__main__':
+    app.run(debug=True)

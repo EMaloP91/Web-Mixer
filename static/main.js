@@ -22,3 +22,18 @@ faders.forEach(fader => {
         fader.setAttribute('value', (2 * Math.log10(fader.value)).toFixed(2).toString());
     });
 });
+
+// add name of each instrument to every channel
+// fetch audio files from server
+fetch('/audiofiles')
+    .then(response => response.json())
+    .then(audioFilenames => {
+        let names = document.querySelectorAll(".nametrack");
+        names.forEach((name,index) => {
+            if (index < audioFilenames.length) {
+                name.innerText = audioFilenames[index];
+            }
+        });
+    })
+
+    console.log(audioFilenames);
