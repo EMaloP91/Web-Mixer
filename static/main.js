@@ -35,5 +35,3 @@ fetch('/audiofiles')
             }
         });
     })
-
-    console.log(audioFilenames);
