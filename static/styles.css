@@ -105,3 +105,24 @@ h1 {
     left: 75%;
     transform: rotate(90deg);
 }
+
+#play-pause {
+    background-color: #0db675;
+    color: #0c0c25;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: 3px solid black ;
+    box-shadow: 0 2px 2px 2px black;
+    margin-top: 25px;
+}
+
+#play-pause:active {
+    background-color: #83b60d;
+    box-shadow: none;
+}
+
+/*#play-puse img {
+    height: 50px;
+    width: 50px;
+}*/
