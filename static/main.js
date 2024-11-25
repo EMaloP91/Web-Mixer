@@ -4,6 +4,11 @@ let faders = document.querySelectorAll(".fader input[type='range']");
 // get all pans
 let pans = document.querySelectorAll(".pan input[type='range']");
 
+// declare audio context variable
+let audioCtx;
+
+// initialize a current time variable
+let currenTime = 0;
 
 // loop through each pan
 pans.forEach(pan => {
@@ -26,11 +31,18 @@ faders.forEach(fader => {
 //declare array to store the URLs of the audio files
 let audioUrls = [];
 
+let playing = [];
+
+// get button to start audio context (start console)
 const onButton = document.getElementById("onbutton");
+
+// get button to play and pause
+const playPauseBtn = document.getElementById("play-pause");
 
 onButton.addEventListener("click", () => {
     // create a new audio base context to start API
-    const audioCtx = new AudioContext();
+    audioCtx = new AudioContext();
+    console.log("audio context started");
 
     // add name of each instrument to every channel
     // fetch audio files from server
@@ -51,64 +63,70 @@ onButton.addEventListener("click", () => {
                     audioUrls.push(audioUrl);
                 }
             });
+        return setupSamples(audioUrls);
+        })
+        .then(samples => {
+            console.log(samples[0].length);
+            playPauseBtn.addEventListener("click", () => {
+                console.log(currenTime);
+                if (currenTime === 0) {
+                    for (let i = 0; i < samples.length; i++) {
+                        playSample(samples[i], currenTime);
+                    }
+                    currenTime = audioCtx.currentTime;
+                }
+                else if (audioCtx.state === 'running') {
+                    audioCtx.suspend().then(() => {
+                        currenTime = audioCtx.currentTime;
+                    });
+                }
+                else if (audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => {
+                        currenTime = audioCtx.currentTime;
+                    })
+                }
         });
-
-
-    // create an async function to avoid other code execute before it 
-    // decode audio with this function
-    async function getFile(audioContext, filepath) {
-        // call the audio from the server
-        const response = await fetch(filepath);
-        // wait for response and store it in const
-        const arrayBuffer = await response.arrayBuffer();
-        // decode the audio of the buffer
-        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-        // return the audio information
-        return audioBuffer;
-    };
-
-    //async function to store audio data in buffer array
-    async function setUpBuffers() {
-        // create buffer array
-        let audioBuffers = [];
-        // create loop to iterate trhough each url
-        for (let i = 0; i < audioUrls.length; i++) {
-            //store data of the url in a buffer an then in array
-            const audbuffer = await getFile(audioCtx, audioUrls[i]);
-            audioBuffers.push(audbuffer);
-        }
-        // return array of buffers
-        return audioBuffers;
-    };
-
-    // store buffers
-    let buffers = setUpBuffers();
-
-    //create audioBuffersSourceNodes for each audio
-    let sourceNodes = [];
-
-    for (let i = 0; i < buffers.length; i++) {
-        let buffer = audioCtx.createBufferSource();
-        buffer.buffer = buffers[i];
-        buffer.connect(audioCtx.destination);
-        sourceNodes.push(buffer);
-    };
-
-    //get the play pause button
-    const playPause = document.getElementById("play-pause");
-
-    //create constant to check if song is being played or not
-    //let isPlaying = false;
-    // setup play function to click on button
-    playPause.addEventListener("click", (ev) => {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume;
-        }
-
-        if (audioCtx.state === 'running') {
-            audioCtx.suspend;
-        }
-    });
+   /*  // start the setupSamples function and play/pause button
+    setupSamples(audioUrls).then((response) => {
+        const samples = response;
+        console.log(samples);
+    }); */
 });
 
+// create async function to fetch audiofiles
+async function getFile(filepath) {
+    //fetcth audiofile and wait for response
+    const response = await fetch(filepath);
+    //store the information of the response in an arrayBuffer using
+    //arrayBuffer method
+    const arrayBuffer = await response.arrayBuffer();
+    //decode the data into audio and store it in audiobuffer
+    //using the audio context initialized before
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    //return audioBuffer
+    return audioBuffer;
+};
 
+// create async funciton to prepare audio samples
+//and store them in an array
+async function setupSamples(paths) {
+    // prepare an array for storing buffers
+    const audioBuffers = [];
+    console.log("setting up samples");
+    //creating a loop to store each buffer
+    for (const path of paths) {
+        const sample = await getFile(path);
+        audioBuffers.push(sample);
+    }
+
+    // return the new created array of buffers
+    console.log("setting up done")
+    return audioBuffers;
+};
+
+function playSample(audioBuffer, time) {
+    const sampleSource = audioCtx.createBufferSource();
+    sampleSource.buffer = audioBuffer;
+    sampleSource.connect(audioCtx.destination);
+    sampleSource.start(time);
+};
