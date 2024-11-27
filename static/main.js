@@ -7,8 +7,14 @@ let pans = document.querySelectorAll(".pan input[type='range']");
 // declare audio context variable
 let audioCtx;
 
-// initialize a current time variable
-let currenTime = 0;
+// initialize a time variable
+let time = 0;
+
+let sampleSource;
+
+let loopEnd;
+
+let loopStart = 0;
 
 // loop through each pan
 pans.forEach(pan => {
@@ -31,7 +37,7 @@ faders.forEach(fader => {
 //declare array to store the URLs of the audio files
 let audioUrls = [];
 
-let playing = [];
+let flag = "running";
 
 // get button to start audio context (start console)
 const onButton = document.getElementById("onbutton");
@@ -66,32 +72,30 @@ onButton.addEventListener("click", () => {
         return setupSamples(audioUrls);
         })
         .then(samples => {
-            console.log(samples[0].length);
             playPauseBtn.addEventListener("click", () => {
-                console.log(currenTime);
-                if (currenTime === 0) {
+                console.log(audioCtx.currentTime);
+                loopEnd = samples[0].duration;
+                if (time === 0) {
                     for (let i = 0; i < samples.length; i++) {
-                        playSample(samples[i], currenTime);
+                        playSample(samples[i], 0, time);
                     }
-                    currenTime = audioCtx.currentTime;
+                    time = 1;
                 }
                 else if (audioCtx.state === 'running') {
                     audioCtx.suspend().then(() => {
-                        currenTime = audioCtx.currentTime;
+                        //currenTime = audioCtx.currentTime;
+                        flag = "suspended";
                     });
+
                 }
                 else if (audioCtx.state === 'suspended') {
                     audioCtx.resume().then(() => {
-                        currenTime = audioCtx.currentTime;
+                        flag = "running";
                     })
                 }
-        });
-   /*  // start the setupSamples function and play/pause button
-    setupSamples(audioUrls).then((response) => {
-        const samples = response;
-        console.log(samples);
-    }); */
-});
+            });
+        }); 
+    });
 
 // create async function to fetch audiofiles
 async function getFile(filepath) {
@@ -124,9 +128,12 @@ async function setupSamples(paths) {
     return audioBuffers;
 };
 
-function playSample(audioBuffer, time) {
-    const sampleSource = audioCtx.createBufferSource();
+function playSample(audioBuffer, time, startTime) {
+    sampleSource = audioCtx.createBufferSource();
     sampleSource.buffer = audioBuffer;
     sampleSource.connect(audioCtx.destination);
-    sampleSource.start(time);
+    sampleSource.loop = true;
+    sampleSource.loopStart = loopStart;
+    sampleSource.loopEnd = loopEnd;
+    sampleSource.start(time, startTime);
 };
