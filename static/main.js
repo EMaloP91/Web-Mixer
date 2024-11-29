@@ -103,6 +103,7 @@ onButton.addEventListener("click", () => {
                     for (let i = 0; i < samples.length; i++) {
                         playSample(samples[i], 0, time, i);
                     }
+                    // change time to 1
                     time = 1;
                 }
 
@@ -120,13 +121,22 @@ onButton.addEventListener("click", () => {
                     })
                 }
             });
+            // add a stop button that calls stop function
             stopBtn.addEventListener("click", () => {
                 stopSong(sampleSources);
+                // change tiem to 0
                 time = 0;
             });
+            // adding control of the pan sliders
             for (let i = 0; i < pans.length; i++) {
                 pans[i].oninput = () => {
                     panners[i].pan.setValueAtTime(pans[i].value, 0);
+                }
+            }
+            // adding control of the gain sliders
+            for (let i = 0; i < faders.length; i++) {
+                faders[i].oninput = () => {
+                    gains[i].gain.setValueAtTime(faders[i].value, 0);
                 }
             }
         }); 
@@ -166,18 +176,29 @@ async function setupSamples(paths) {
 // create function to play audio
 // function accepts an audiobuffer, a "when" to start (now, later), and at what point in the song to start
 function playSample(audioBuffer, time, startTime, index) {
+    // create an audio audio buffer source node
     let audio = audioCtx.createBufferSource();
+    // adding the audio buffer soruce node to the array (so that it can be called later)
     sampleSources[index] = audio;
+    // store the decoded audio in the buffer node
     audio.buffer = audioBuffer;
+    // connecting it to the pan node
     audio.connect(panners[index]);
+    // connecting the pan node to the gain node
     panners[index].connect(gains[index]);
+    // starting the loop
     audio.loop = true;
+    // setting the start of the loop
     audio.loopStart = loopStart;
+    // setting the end of the loop
     audio.loopEnd = loopEnd;
+    // connecting the gain node to the audio 
     gains[index].connect(audioCtx.destination);
+    // starting the audio
     audio.start(time, startTime);
 };
 
+// create a function to stop the song
 function stopSong(sources) {
     for (let i = 0; i < sources.length; i++) {
         sources[i].stop();
