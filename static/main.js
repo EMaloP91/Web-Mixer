@@ -7,6 +7,7 @@ let time = 0;
 
 // initialize a source variable
 let sampleSources = [];
+
 // initialize the start and end of loop 
 let loopEnd;
 let loopStart = 0;
@@ -19,8 +20,14 @@ let flag = "running";
 // get all faders
 let faders = document.querySelectorAll(".fader input[type='range']");
 
+// create array that will contain gain nodes
+let gains = [];
+
 // get all pans
 let pans = document.querySelectorAll(".pan input[type='range']");
+
+// create array that will contain stereo Panner nodes
+let panners = [];
 
 // get button to start audio context (start console)
 const onButton = document.getElementById("onbutton");
@@ -54,6 +61,16 @@ onButton.addEventListener("click", () => {
     audioCtx = new AudioContext();
     console.log("audio context started");
 
+    // cretea panner nodes
+    for (let i = 0; i < pans.length; i++) {
+        panners[i] = audioCtx.createStereoPanner();
+    }
+
+    // create gain nodes for faders
+    for (let i = 0; i < faders.length; i++) {
+        gains[i] = audioCtx.createGain();
+    }
+
     // add name of each instrument to every channel
     // fetch audio files from server
     fetch('/audiofiles')
@@ -77,21 +94,26 @@ onButton.addEventListener("click", () => {
         })
         .then(samples => {
             playPauseBtn.addEventListener("click", () => {
-                console.log(time)
+
+                // define end of loop
                 loopEnd = samples[0].duration;
+                
+                // start playing song from beginning
                 if (time === 0) {
                     for (let i = 0; i < samples.length; i++) {
                         playSample(samples[i], 0, time, i);
                     }
                     time = 1;
                 }
+
+                // pause audio
                 else if (audioCtx.state === 'running') {
                     audioCtx.suspend().then(() => {
-                        //currenTime = audioCtx.currentTime;
                         flag = "suspended";
                     });
 
                 }
+                // resume audio
                 else if (audioCtx.state === 'suspended') {
                     audioCtx.resume().then(() => {
                         flag = "running";
@@ -99,10 +121,14 @@ onButton.addEventListener("click", () => {
                 }
             });
             stopBtn.addEventListener("click", () => {
-                console.log(time);
                 stopSong(sampleSources);
                 time = 0;
             });
+            for (let i = 0; i < pans.length; i++) {
+                pans[i].oninput = () => {
+                    panners[i].pan.setValueAtTime(pans[i].value, 0);
+                }
+            }
         }); 
     });
 
@@ -138,15 +164,17 @@ async function setupSamples(paths) {
 };
 
 // create function to play audio
-// function accepts an audiobuffer, a when to start (now, later), and at what point in the song to start
+// function accepts an audiobuffer, a "when" to start (now, later), and at what point in the song to start
 function playSample(audioBuffer, time, startTime, index) {
     let audio = audioCtx.createBufferSource();
     sampleSources[index] = audio;
     audio.buffer = audioBuffer;
-    audio.connect(audioCtx.destination);
+    audio.connect(panners[index]);
+    panners[index].connect(gains[index]);
     audio.loop = true;
     audio.loopStart = loopStart;
     audio.loopEnd = loopEnd;
+    gains[index].connect(audioCtx.destination);
     audio.start(time, startTime);
 };
 
