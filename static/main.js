@@ -14,8 +14,9 @@ let loopStart = 0;
 
 //declare array to store the URLs of the audio files
 let audioUrls = [];
-// create flag
+// create flags
 let flag = "running";
+let setupDone = false;
 
 // get all faders
 let faders = document.querySelectorAll(".fader input[type='range']");
@@ -32,11 +33,17 @@ let panners = [];
 // get button to start audio context (start console)
 const onButton = document.getElementById("onbutton");
 
+// get h2 text 
+const setupText = document.getElementById("sample-setup")
+
 // get button to play and pause
 const playPauseBtn = document.getElementById("play-pause");
 
 // get button to stop
 const stopBtn = document.getElementById("stop");
+
+// get all channel container elements
+const channels = document.querySelectorAll(".channel");
 
 // loop through each pan
 pans.forEach(pan => {
@@ -94,6 +101,9 @@ onButton.addEventListener("click", () => {
         })
         .then(samples => {
             playPauseBtn.addEventListener("click", () => {
+
+                // hide h2 text that is not necesary
+                setupText.style.visibility = "hidden";
 
                 // define end of loop
                 loopEnd = samples[0].duration;
@@ -162,6 +172,9 @@ async function setupSamples(paths) {
     // prepare an array for storing buffers
     const audioBuffers = [];
     console.log("setting up samples");
+    if (setupDone === false) {
+        setupText.style.visibility = "visible";
+    }
     //creating a loop to store each buffer
     for (const path of paths) {
         const sample = await getFile(path);
@@ -169,7 +182,19 @@ async function setupSamples(paths) {
     }
 
     // return the new created array of buffers
-    console.log("setting up done")
+    console.log("setting up done");
+    // change samplsSetup flag 
+    setupDone = true;
+
+    // show controls
+    if (setupDone === true) {
+        setupText.innerText = "Ready";
+        playPauseBtn.style.visibility = "visible";
+        stopBtn.style.visibility = "visible";
+        channels.forEach((channel) => {
+            channel.style.visibility = "visible";
+        });
+    }
     return audioBuffers;
 };
 

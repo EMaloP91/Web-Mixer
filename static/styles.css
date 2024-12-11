@@ -8,6 +8,15 @@ h1 {
     font-weight: bold;
 }
 
+#sample-setup {
+    font-size: 50px;
+    font-weight: bold;
+    color: #06f726;
+    text-shadow: 0.8px 0.8px 1px #07250b;
+    -webkit-text-stroke: 1px #03b41b;
+    visibility: hidden;
+}
+
 .centered {
     align-items: center;
     justify-content: center;
@@ -16,14 +25,15 @@ h1 {
 .channel {
     background: linear-gradient(80deg, #8f8c8c, 60%, #ccc8c8);
     max-width: 100%;
+    visibility: hidden;
 }
 
-#master {
+/* #master {
     background: linear-gradient(80deg, #921010, 60%, #fc0000);
     max-width: 100%;
-}
+}*/
 
-.channel, #master {
+.channel {
     border-left: 5px solid whitesmoke;
     /*border-image: linear-gradient(90deg, #f7f5ed, 50%, #d9d7d0);*/
     min-height: 85vh;
@@ -123,6 +133,7 @@ h1 {
     border: 3px solid black ;
     box-shadow: 0 2px 2px 2px black;
     margin-top: 25px;
+    visibility: hidden;
 }
 
 #play-pause:active {
@@ -139,6 +150,7 @@ h1 {
     border: 3px solid black;
     box-shadow: 0 2px 2px 2px black;
     margin-top: 25px;
+    visibility: hidden;
 }
 
 #stop:active {
