@@ -45,22 +45,38 @@ const stopBtn = document.getElementById("stop");
 // get all channel container elements
 const channels = document.querySelectorAll(".channel");
 
+/* // get save button
+const save = document.getElementById("save");
+
+// get load button
+const load = document.getElementById("load"); */
+
+// create pan value array
+let panValue = [];
+
+// create fader value array
+let faderValue = [];
+
 // loop through each pan
-pans.forEach(pan => {
+pans.forEach((pan, index) => {
     //add an event listener for when the range is moved
     pan.addEventListener('input', function() {
         //change the attribute value accordingly
         pan.setAttribute('value', pan.value);
     });
+
+    panValue[index] = parseFloat(pan.value);
 });
 
 // loop through each fader
-faders.forEach(fader => {
+faders.forEach((fader, index) => {
     //add an event listener for when the range is moved
     fader.addEventListener('input', function() {
         //change the attribute value accordingly
         fader.setAttribute('value', (2 * Math.log10(fader.value)).toFixed(2).toString());
     });
+
+    faderValue[index] = parseFloat(fader.value);
 });
 
 onButton.addEventListener("click", () => {
@@ -131,26 +147,41 @@ onButton.addEventListener("click", () => {
                     })
                 }
             });
+
             // add a stop button that calls stop function
             stopBtn.addEventListener("click", () => {
                 stopSong(sampleSources);
-                // change tiem to 0
+                // change time to 0
                 time = 0;
             });
+
             // adding control of the pan sliders
             for (let i = 0; i < pans.length; i++) {
                 pans[i].oninput = () => {
                     panners[i].pan.setValueAtTime(pans[i].value, 0);
+                    panValue[i] = pans[i].value;
                 }
             }
+            
             // adding control of the gain sliders
             for (let i = 0; i < faders.length; i++) {
                 faders[i].oninput = () => {
                     gains[i].gain.setValueAtTime(faders[i].value, 0);
+                    faderValue[i] = faders[i].value;
                 }
             }
         }); 
     });
+
+/* save.addEventListener("click", () => {
+    fetch('/save',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ array1: panValue, array2: faderValue })
+    })
+}); */
 
 // create async function to fetch audiofiles
 async function getFile(filepath) {
@@ -191,6 +222,8 @@ async function setupSamples(paths) {
         setupText.innerText = "Ready";
         playPauseBtn.style.visibility = "visible";
         stopBtn.style.visibility = "visible";
+        /* load.style.visibility = "visible";
+        save.style.visibility = "visible"; */
         channels.forEach((channel) => {
             channel.style.visibility = "visible";
         });
