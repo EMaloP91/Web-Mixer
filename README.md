@@ -1,5 +1,5 @@
 # WEB Mixer
-## Video Demo:  [Youtube Video]()
+## Video Demo:  [Youtube Video](https://youtu.be/ePivsohwEEw)
 ## Description:
 ### Introduction
 
@@ -105,7 +105,7 @@ Next, the function for the **stop** button is implemented. When the button is cl
 
 Finally, two loops are implemented to give the user control. Each time the user adjusts the **pan** or **fader** sliders, these changes are applied to the corresponding pan or gain nodes, updating the values accordingly.
 
-### Recomendations
+### Recommendations
 
 Although this project is in a state that can be considered **complete** since it fulfills its purpose of functioning as a basic audio console, there is still much room for improvement.
 
